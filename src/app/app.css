@@ -1,0 +1,254 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.controls {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #1e7e34;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #545b62;
+}
+
+.logs-section {
+  margin-top: 30px;
+}
+
+.logs-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.logs-container {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: white;
+}
+
+.log-entry {
+  border-bottom: 1px solid #e9ecef;
+  padding: 15px;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.log-timestamp {
+  font-size: 12px;
+  color: #666;
+  font-family: monospace;
+}
+
+.log-operation {
+  font-weight: 500;
+  color: #333;
+}
+
+.log-type {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.log-step {
+  color: #666;
+  font-size: 13px;
+}
+
+.log-url {
+  color: #007bff;
+  font-size: 12px;
+  font-family: monospace;
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #dee2e6;
+}
+
+.log-data {
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.log-data pre {
+  margin: 0;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.log-request .log-type {
+  background-color: #007bff;
+  color: white;
+}
+
+.log-response .log-type {
+  background-color: #28a745;
+  color: white;
+}
+
+.log-client .log-type {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.log-ctap2 .log-type {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.log-error .log-type {
+  background-color: #dc3545;
+  color: white;
+}
+
+.log-error {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.decode-button {
+  padding: 4px 8px;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.decode-button:hover {
+  background: #007bff;
+  color: white;
+}
+
+.decode-button.active {
+  background: #007bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .log-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
