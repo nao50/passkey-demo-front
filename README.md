@@ -57,3 +57,19 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+{
+  "response": "Attestation",
+  "responseCode": "0x01",
+  "hexData": "0x00",
+  "description": "Attestation response from authenticator",
+  "actualData": {
+    "fmt": "packed",
+    "authData": "Binary data (contained in attestationObject)",
+    "attStmt": "CBOR data (contained in attestationObject)",
+    "attestationObjectDecoded": {
+      "note": "CBOR-encoded object containing authData, fmt, and attStmt",
+      "credentialId": "zwH6l0J0UGEqjA7ZinwpUkamB_o"
+    }
+  },
+}

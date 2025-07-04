@@ -100,6 +100,15 @@
   background-color: #545b62;
 }
 
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: #e0a800;
+}
+
 .logs-section {
   margin-top: 30px;
 }

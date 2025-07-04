@@ -48,6 +48,18 @@
       >
         Clear Logs
       </button>
+      
+      <button 
+        (click)="verifyToken()"
+        class="btn btn-warning"
+        [disabled]="isLoading() || !accessToken()"
+      >
+        @if (isLoading()) {
+          Verifying...
+        } @else {
+          Verify Token
+        }
+      </button>
     </div>
   </div>
 

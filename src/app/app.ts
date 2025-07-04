@@ -25,6 +25,7 @@ export class App {
   username = signal('');
   isLoading = signal(false);
   logs = signal<LogEntry[]>([]);
+  accessToken = signal<string | null>(null);
   
   private baseUrl = 'http://localhost:3000';
 
@@ -40,6 +41,53 @@ export class App {
 
   clearLogs() {
     this.logs.set([]);
+    this.accessToken.set(null);
+  }
+
+  async verifyToken() {
+    const token = this.accessToken();
+    if (!token) {
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    try {
+      this.addLog({
+        type: 'request',
+        operation: 'authentication',
+        step: 'Verifying access token',
+        data: { 
+          token: token,
+          authorizationHeader: `Bearer ${token}`
+        },
+        url: `${this.baseUrl}/verify`
+      });
+
+      const response = await this.http.get<any>(`${this.baseUrl}/verify`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).toPromise();
+
+      this.addLog({
+        type: 'response',
+        operation: 'authentication',
+        step: 'Token verification result',
+        data: response,
+        url: `${this.baseUrl}/verify`
+      });
+
+    } catch (error) {
+      this.addLog({
+        type: 'error',
+        operation: 'authentication',
+        step: 'Token verification failed',
+        data: error
+      });
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   async registerPasskey() {
@@ -131,8 +179,8 @@ export class App {
           },
           decodedData: {
             fmt: 'packed (typical format)',
-            authDataDecoded: 'RP ID hash + flags + counter + attested credential data',
-            attStmtDecoded: 'Format-specific attestation statement',
+            authData: 'RP ID hash + flags + counter + attested credential data',
+            attStmt: 'Format-specific attestation statement',
             attestationObjectDecoded: {
               note: 'CBOR-encoded object containing authData, fmt, and attStmt',
               credentialId: credential.id || 'Generated credential ID'
@@ -284,10 +332,10 @@ export class App {
             userHandle: credential.response?.userHandle || null
           },
           decodedData: {
-            credentialIdDecoded: 'Selected credential identifier',
-            authDataDecoded: 'RP ID hash + flags + signature counter',
-            signatureDecoded: 'Digital signature over authData + clientDataHash',
-            userHandleDecoded: 'User identifier (if resident key)'
+            credentialId: 'Selected credential identifier',
+            authData: 'RP ID hash + flags + signature counter',
+            signature: 'Digital signature over authData + clientDataHash',
+            userHandle: 'User identifier (if resident key)'
           }
         }
       });
@@ -321,12 +369,10 @@ export class App {
       });
 
       if (verificationResponse?.verified) {
-        this.addLog({
-          type: 'client-generated',
-          operation: 'authentication',
-          step: 'Authentication successful',
-          data: { success: true }
-        });
+        // Store access token if available
+        if (verificationResponse.accessToken) {
+          this.accessToken.set(verificationResponse.accessToken);
+        }
       }
 
     } catch (error) {
@@ -385,7 +431,7 @@ export class App {
     if (!data || typeof data !== 'object') return data;
     
     // Handle CTAP2 command data
-    if (data.command) {
+    if (data.command || data.response) {
       return this.decodeCTAP2Data(data);
     }
     
@@ -466,12 +512,30 @@ export class App {
   }
 
   private decodeCTAP2Data(data: any): any {
-    // For CTAP2 data, replace actualData with decodedData
+    // For CTAP2 data, create a completely new structure for decoded view
     if (data.decodedData) {
-      const decoded: any = { ...data };
-      decoded.actualData = data.decodedData;
-      // Remove decodedData from decoded view to avoid duplication
-      delete decoded.decodedData;
+      const decoded: any = {
+        command: data.command,
+        commandCode: data.commandCode,
+        response: data.response,
+        responseCode: data.responseCode,
+        hexData: data.hexData,
+        description: data.description
+      };
+      
+      // For attestation response, replace attestationObject with attestationObjectDecoded
+      if (data.response === 'Attestation' && data.decodedData.attestationObjectDecoded) {
+        decoded.actualData = {
+          fmt: data.decodedData.fmt,
+          authData: data.decodedData.authData,
+          attStmt: data.decodedData.attStmt,
+          attestationObjectDecoded: data.decodedData.attestationObjectDecoded
+        };
+      } else {
+        // For other cases, use decodedData as actualData
+        decoded.actualData = { ...data.decodedData };
+      }
+      
       return decoded;
     }
     
@@ -507,6 +571,17 @@ export class App {
   }
 
   getDisplayData(log: LogEntry): any {
-    return log.decoded ? log.decodedData : log.data;
+    if (log.decoded && log.decodedData) {
+      return log.decodedData;
+    }
+    
+    // For non-decoded CTAP2 logs, hide decodedData from display
+    if (log.type === 'ctap2' && log.data && log.data.decodedData && !log.decoded) {
+      const displayData = { ...log.data };
+      delete displayData.decodedData;
+      return displayData;
+    }
+    
+    return log.data;
   }
 }
